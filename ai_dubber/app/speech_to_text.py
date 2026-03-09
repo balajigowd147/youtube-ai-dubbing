@@ -2,19 +2,19 @@ from faster_whisper import WhisperModel
 
 model = WhisperModel(
     "small",
-    device="cpu",
-    compute_type="int8"
+    device="cuda",
+    compute_type="float16"
 )
 
 def audio_to_text(audio_path):
 
-    segments, info = model.transcribe(audio_path , language='en')
-
-    text = ""
+    segments, info = model.transcribe(audio_path, task="translate" , beam_size=5)
 
     print("Detected language:", info.language)
 
-    for segment in segments:
-        text += segment.text + " "
+    text_parts = []
 
-    return text
+    for segment in segments:
+        text_parts.append(segment.text)
+
+    return " ".join(text_parts)
